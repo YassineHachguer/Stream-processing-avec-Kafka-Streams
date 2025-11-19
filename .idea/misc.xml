@@ -5,6 +5,9 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/Producteur_Web/pom.xml" />
+        <option value="$PROJECT_DIR$/Application_Kafka_Streams/pom.xml" />
+        <option value="$PROJECT_DIR$/Consommateur_REST/pom.xml" />
       </list>
     </option>
   </component>

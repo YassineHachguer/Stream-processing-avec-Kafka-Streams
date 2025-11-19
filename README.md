@@ -84,5 +84,71 @@ docker exec -it broker kafka-console-consumer --topic station-averages --from-be
 ```
 ![img.png](images/img_5.png)
 
+# Exercice 3 : Calcul du nombre de clics avec Kafka Streams et Spring Boot
+## Objectif
+
+Développer une solution complète pour **suivre et analyser les clics des utilisateurs en temps réel** :
+
+- Chaque clic utilisateur est envoyé à un topic Kafka.
+- Kafka Streams compte dynamiquement le nombre total de clics.
+- Les résultats sont exposés via une API REST.
+
+L’objectif est de comprendre le fonctionnement de **Kafka, Kafka Streams** et leur intégration avec **Spring Boot**.
+
+---
+## Architecture
+
+1. **Producteur Web** (`Producteur_Web`)
+   - Application web Spring Boot avec un bouton "Cliquez ici".
+   - Chaque clic envoie un message au topic Kafka `clicks`.
+   - Message Kafka : clé = `userId`, valeur = `"click"`.
+   - Port recommandé : `8080`.
+
+2. **Application Kafka Streams** (`Application_Kafka_Streams`)
+   - Consomme les messages du topic `clicks`.
+   - Compte le nombre total de clics par utilisateur ou globalement.
+   - Publie les résultats dans le topic Kafka `click-counts`.
+
+3. **Consommateur REST** (`Consommateur_REST`)
+   - Consomme les données du topic `click-counts`.
+   - Expose un endpoint REST pour récupérer le nombre total de clics :
+     ```
+     GET /clicks/count
+     ```
+---
+
+## Tests
+
+### 1. Création des topics Kafka
+```bash
+docker exec broker kafka-topics --create --topic clicks --bootstrap-server localhost:9092
+docker exec broker kafka-topics --create --topic click-counts --bootstrap-server localhost:9092
+```
+![img.png](images/img_6.png)
+
+### 2. Lancer les applications Spring Boot
+
+- Producteur Web : port 8080
+
+- Application Kafka Streams : pas de serveur web requis, exécuter normalement
+
+- Consommateur REST : port 8081
+
+### 3. Tester le clic
+- Avec navigateur : Ouvrir http://localhost:8080/
+
+- Cliquer sur le bouton "Cliquez ici" plusieurs fois
+  ![img.png](images/img_7.png)
+
+### 4. Vérification des messages Kafka
+```bash
+# Vérifier les clics envoyés
+docker exec broker kafka-console-consumer --bootstrap-server localhost:9092 --topic clicks --from-beginning
+
+# Vérifier le nombre de clics calculé
+docker exec broker kafka-console-consumer --bootstrap-server localhost:9092 --topic click-counts --from-beginning
+
+```
+
 
 
